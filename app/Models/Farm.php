@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Farm extends Model
 {
@@ -41,5 +42,21 @@ class Farm extends Model
         return $this->belongsToMany(Vet::class, 'farm_vet')
             ->withPivot('assigned_at')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the vet requests for this farm.
+     */
+    public function vetRequests(): HasMany
+    {
+        return $this->hasMany(VetRequest::class);
+    }
+
+    /**
+     * Get the animals on this farm.
+     */
+    public function animals(): HasMany
+    {
+        return $this->hasMany(Animal::class);
     }
 }
