@@ -244,13 +244,24 @@ class AnimalController extends Controller
     public function show(string $id): JsonResponse
     {
         $user = request()->user();
-        $farmer = $user->profile;
+        $profile = $user->profile;
 
-        if (!$farmer || !($farmer instanceof \App\Models\Farmer)) {
-            return response()->json(['message' => 'Farmer profile not found'], 404);
+        $animal = Animal::findOrFail($id);
+
+        // Check access: farmer owns the farm, or vet is assigned to the farm
+        if ($profile instanceof \App\Models\Farmer) {
+            $farm = $profile->farm;
+            if (!$farm || $animal->farm_id !== $farm->id) {
+                return response()->json(['message' => 'Animal not found'], 404);
+            }
+        } elseif ($profile instanceof \App\Models\Vet) {
+            // Check if vet has access to this farm
+            if (!$this->hasAccessToFarm($animal->farm_id)) {
+                return response()->json(['message' => 'You do not have access to this animal'], 403);
+            }
+        } else {
+            return response()->json(['message' => 'Access denied'], 403);
         }
-
-        $farm = $farmer->farm;
 
         // Load animalable only if it's cattle and class exists
         if ($animal->species === 'cattle' && $animal->animalable_type && class_exists($animal->animalable_type)) {
@@ -284,6 +295,18 @@ class AnimalController extends Controller
             }
         }
 
+        // Add calving history for all animals (to see if they were born from a calving)
+        // For cows/heifers, this shows their own calving history
+        // For calves, this shows the calving record that created them
+        $calvings = \App\Models\Calving::where('animal_id', $animal->id)
+            ->with('performedBy')
+            ->orderBy('calving_date', 'desc')
+            ->get();
+        
+        if ($calvings->isNotEmpty()) {
+            $response['calving_history'] = $calvings;
+        }
+
         return response()->json($response);
     }
 
@@ -292,7 +315,25 @@ class AnimalController extends Controller
      */
     public function upcomingCalvings(Request $request): JsonResponse
     {
-        $farm = $this->getUserFarm();
+        $user = request()->user();
+        $profile = $user->profile;
+
+        $farm = null;
+        if ($request->has('farm_id')) {
+            $farmId = (int) $request->farm_id;
+            if ($profile instanceof \App\Models\Farmer) {
+                $farmerFarm = $profile->farm;
+                if ($farmerFarm && $farmerFarm->id === $farmId) {
+                    $farm = $farmerFarm;
+                }
+            } elseif ($profile instanceof \App\Models\Vet) {
+                if ($this->hasAccessToFarm($farmId)) {
+                    $farm = Farm::find($farmId);
+                }
+            }
+        } else {
+            $farm = $this->getUserFarm();
+        }
 
         if (!$farm) {
             return response()->json(['upcoming_calvings' => [], 'count' => 0]);
@@ -327,13 +368,28 @@ class AnimalController extends Controller
     public function cowsNeedingInsemination(Request $request): JsonResponse
     {
         $user = request()->user();
-        $farmer = $user->profile;
+        $profile = $user->profile;
 
-        if (!$farmer || !($farmer instanceof \App\Models\Farmer)) {
-            return response()->json(['message' => 'Farmer profile not found'], 404);
+        $farm = null;
+        if ($request->has('farm_id')) {
+            $farmId = (int) $request->farm_id;
+            if ($profile instanceof \App\Models\Farmer) {
+                $farmerFarm = $profile->farm;
+                if ($farmerFarm && $farmerFarm->id === $farmId) {
+                    $farm = $farmerFarm;
+                }
+            } elseif ($profile instanceof \App\Models\Vet) {
+                if ($this->hasAccessToFarm($farmId)) {
+                    $farm = Farm::find($farmId);
+                }
+            }
+        } else {
+            if ($profile instanceof \App\Models\Farmer) {
+                $farm = $profile->farm;
+            } elseif ($profile instanceof \App\Models\Vet) {
+                $farm = $profile->farms()->first();
+            }
         }
-
-        $farm = $farmer->farm;
 
         if (!$farm) {
             return response()->json(['cows' => [], 'count' => 0]);
@@ -373,12 +429,49 @@ class AnimalController extends Controller
             return response()->json(['notifications' => [], 'count' => 0]);
         }
 
+        $user = request()->user();
         $cattleService = new CattleService();
-        $notifications = $cattleService->getNotifications($farm->id);
+        
+        // Sync notifications to database
+        $cattleService->syncNotificationsForFarm($farm->id);
+
+        // Get unread notifications from database
+        $unreadNotifications = $user->unreadNotifications()
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($notification) {
+                $data = $notification->data;
+                return array_merge($data, [
+                    'id' => $notification->id,
+                    'created_at' => $notification->created_at->toISOString(),
+                ]);
+            })
+            ->values()
+            ->toArray();
 
         return response()->json([
-            'notifications' => $notifications,
-            'count' => count($notifications),
+            'notifications' => $unreadNotifications,
+            'count' => count($unreadNotifications),
+        ]);
+    }
+
+    /**
+     * Mark a notification as read.
+     */
+    public function markNotificationAsRead(string $notificationId): JsonResponse
+    {
+        $user = request()->user();
+        
+        $notification = $user->notifications()->find($notificationId);
+        
+        if (!$notification) {
+            return response()->json(['message' => 'Notification not found'], 404);
+        }
+
+        $notification->markAsRead();
+
+        return response()->json([
+            'message' => 'Notification marked as read',
         ]);
     }
 
@@ -592,17 +685,31 @@ class AnimalController extends Controller
         $validator = Validator::make($request->all(), [
             'insemination_date' => 'required|date',
             'notes' => 'nullable|string|max:1000',
+            'bull_id' => 'nullable|integer|exists:bulls,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $bullId = $request->filled('bull_id') ? (int) $request->bull_id : null;
+        if ($bullId !== null) {
+            $bullAnimal = Animal::where('animalable_type', Bull::class)
+                ->where('animalable_id', $bullId)
+                ->first();
+            if (! $bullAnimal || $bullAnimal->farm_id !== $animal->farm_id) {
+                return response()->json(['message' => 'Bull must belong to the same farm as the cow'], 422);
+            }
+        }
+
         $cattleService = new CattleService();
+        $user = request()->user();
         $insemination = $cattleService->recordInsemination(
-            $animal->animalable, 
+            $animal->animalable,
             $request->insemination_date,
-            $request->notes
+            $request->notes,
+            $user,
+            $bullId
         );
 
         $animal->load(['animalable', 'mother', 'father']);
@@ -617,24 +724,19 @@ class AnimalController extends Controller
 
     /**
      * Update insemination status.
+     * Both farmers and vets can update insemination status.
      */
     public function updateInseminationStatus(Request $request, string $animalId, string $inseminationId): JsonResponse
     {
-        $user = request()->user();
-        $farmer = $user->profile;
-
-        if (!$farmer || !($farmer instanceof \App\Models\Farmer)) {
-            return response()->json(['message' => 'Farmer profile not found'], 404);
-        }
-
-        $farm = $farmer->farm;
-
-        $animal = Animal::where('id', $animalId)
-            ->where('farm_id', $farm->id)
-            ->first();
+        $animal = Animal::find($animalId);
 
         if (!$animal) {
             return response()->json(['message' => 'Animal not found'], 404);
+        }
+
+        // Check if user has access to this animal's farm
+        if (!$this->hasAccessToFarm($animal->farm_id)) {
+            return response()->json(['message' => 'Access denied'], 403);
         }
 
         $insemination = \App\Models\Insemination::where('id', $inseminationId)
@@ -663,7 +765,7 @@ class AnimalController extends Controller
         if ($request->status === 'confirmed') {
             $latestConfirmed = $animal->animalable->inseminations()
                 ->where('status', 'confirmed')
-                ->orderBy('insemination_date', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->first();
             
             if ($latestConfirmed && $latestConfirmed->id === $insemination->id) {
@@ -707,11 +809,59 @@ class AnimalController extends Controller
         }
 
         $inseminations = \App\Models\Insemination::where('animal_id', $animal->id)
-            ->orderBy('insemination_date', 'desc')
-            ->get();
+            ->with(['bull.animals'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($ins) {
+                $bullAnimal = $ins->bull ? $ins->bull->animals->first() : null;
+                return [
+                    'id' => $ins->id,
+                    'cow_id' => $ins->cow_id,
+                    'animal_id' => $ins->animal_id,
+                    'bull_id' => $ins->bull_id,
+                    'bull' => $ins->bull_id && $bullAnimal ? [
+                        'id' => $ins->bull->id,
+                        'tag_number' => $bullAnimal->tag_number,
+                        'name' => $bullAnimal->name,
+                    ] : null,
+                    'insemination_date' => $ins->insemination_date,
+                    'status' => $ins->status,
+                    'notes' => $ins->notes,
+                    'created_at' => $ins->created_at,
+                    'updated_at' => $ins->updated_at,
+                ];
+            });
 
         return response()->json([
             'inseminations' => $inseminations,
+        ]);
+    }
+
+    /**
+     * Get calving history for an animal.
+     */
+    public function getCalvingHistory(string $id): JsonResponse
+    {
+        $animal = Animal::find($id);
+
+        if (!$animal) {
+            return response()->json(['message' => 'Animal not found'], 404);
+        }
+
+        // Check if user has access to this animal's farm
+        if (!$this->hasAccessToFarm($animal->farm_id)) {
+            return response()->json(['message' => 'Access denied'], 403);
+        }
+
+        // Calving history is available for all animals (to see if they were born from a calving)
+        // But primarily for cows/heifers to see their own calving history
+        $calvings = \App\Models\Calving::where('animal_id', $animal->id)
+            ->with('performedBy')
+            ->orderBy('calving_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'calvings' => $calvings,
         ]);
     }
 
@@ -750,7 +900,7 @@ class AnimalController extends Controller
             'calving_date' => 'required|date',
             'notes' => 'nullable|string|max:1000',
             'calves' => 'nullable|array',
-            'calves.*.tag_number' => 'required_with:calves|string|max:255|unique:animals,tag_number,NULL,id,farm_id,' . $farm->id,
+            'calves.*.tag_number' => 'required_with:calves|string|max:255|unique:animals,tag_number,NULL,id,farm_id,' . $animal->farm_id,
             'calves.*.name' => 'nullable|string|max:255',
             'calves.*.type' => 'required_with:calves|in:Bull,Cow,Heifer,Steer',
             'calves.*.date_of_birth' => 'nullable|date',
@@ -764,6 +914,7 @@ class AnimalController extends Controller
         }
 
         $cattleService = new CattleService();
+        $user = request()->user();
         
         // Only pass calves if calving was successful
         $calves = $request->is_successful ? $request->calves : null;
@@ -773,7 +924,8 @@ class AnimalController extends Controller
             $request->calving_date,
             $calves,
             $request->notes,
-            $request->is_successful
+            $request->is_successful,
+            $user
         );
 
         // Reload animal to get updated status

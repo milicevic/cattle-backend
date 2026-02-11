@@ -1,0 +1,69 @@
+{
+    "common": {
+        "welcome": "Welcome",
+        "login": "Login",
+        "logout": "Logout",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "name": "Name",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "search": "Search",
+        "filter": "Filter",
+        "actions": "Actions",
+        "status": "Status",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "close": "Close"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "farmer": "Farmer Dashboard",
+        "vet": "Vet Dashboard",
+        "notifications": "Notifications",
+        "upcoming_calvings": "Upcoming Calvings",
+        "animals": "Animals",
+        "farms": "Farms"
+    },
+    "animals": {
+        "title": "Animals",
+        "add_animal": "Add Animal",
+        "tag_number": "Tag Number",
+        "species": "Species",
+        "type": "Type",
+        "gender": "Gender",
+        "date_of_birth": "Date of Birth",
+        "cattle": "Cattle",
+        "horse": "Horse",
+        "sheep": "Sheep",
+        "bull": "Bull",
+        "cow": "Cow",
+        "steer": "Steer",
+        "heifer": "Heifer"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "important_alerts": "Important alerts and reminders",
+        "calving_due_soon": "Calving Due Soon",
+        "insemination_due": "Insemination Due",
+        "no_notifications": "No notifications"
+    },
+    "calvings": {
+        "title": "Upcoming Calvings",
+        "expected_date": "Expected Date",
+        "days_remaining": "Days Remaining",
+        "no_upcoming": "No upcoming calvings in the next 30 days",
+        "record_calving": "Record Calving"
+    },
+    "farm": {
+        "title": "Farm Information",
+        "name": "Farm Name",
+        "location": "Location",
+        "state": "State"
+    }
+}

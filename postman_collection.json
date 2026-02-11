@@ -1,0 +1,1040 @@
+{
+	"info": {
+		"_postman_id": "cattle-management-api",
+		"name": "Cattle Management API",
+		"description": "Complete API collection for Cattle Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Farmer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"farmer@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"subscription_plan\": \"premium\",\n  \"address\": \"123 Farm Road\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register/farmer",
+							"host": ["{{base_url}}"],
+							"path": ["api", "register", "farmer"]
+						}
+					}
+				},
+				{
+					"name": "Register Vet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"vet@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"license_number\": \"VET12345\",\n  \"specialization\": \"Large Animal\",\n  \"clinic_name\": \"Animal Care Clinic\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register/vet",
+							"host": ["{{base_url}}"],
+							"path": ["api", "register", "vet"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test2@example.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/user",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Farm",
+			"item": [
+				{
+					"name": "Get Farm",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/farm",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm"]
+						}
+					}
+				},
+				{
+					"name": "Create Farm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"My Farm\",\n  \"location\": \"123 Farm Road\",\n  \"state\": \"Countryside\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/farm",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm"]
+						}
+					}
+				},
+				{
+					"name": "Update Farm",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Farm Name\",\n  \"location\": \"456 New Road\",\n  \"state\": \"New State\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/farm",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm"]
+						}
+					}
+				},
+				{
+					"name": "Get Assigned Vets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/farm/vets",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm", "vets"]
+						}
+					}
+				},
+				{
+					"name": "Assign Vet to Farm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/farm/vets/:vetId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm", "vets", ":vetId"],
+							"variable": [
+								{
+									"key": "vetId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Remove Vet from Farm",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/farm/vets/:vetId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "farm", "vets", ":vetId"],
+							"variable": [
+								{
+									"key": "vetId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Animals",
+			"item": [
+				{
+					"name": "Get All Animals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals?species=cattle&type=Bull",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals"],
+							"query": [
+								{
+									"key": "species",
+									"value": "cattle",
+									"description": "Filter by species: cattle, horse, sheep"
+								},
+								{
+									"key": "type",
+									"value": "Bull",
+									"description": "Filter by type"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Animal (Cattle - Bull)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tag_number\": \"BULL-001\",\n  \"species\": \"cattle\",\n  \"type\": \"Bull\",\n  \"name\": \"Big Bull\",\n  \"gender\": \"male\",\n  \"date_of_birth\": \"2020-01-15\",\n  \"semen_quality\": \"Excellent\",\n  \"aggression_level\": \"Low\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals"]
+						}
+					}
+				},
+				{
+					"name": "Create Animal (Cattle - Cow)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tag_number\": \"COW-001\",\n  \"species\": \"cattle\",\n  \"type\": \"Cow\",\n  \"name\": \"Bessie\",\n  \"gender\": \"female\",\n  \"date_of_birth\": \"2019-05-20\",\n  \"milk_yield\": 25.5,\n  \"last_calving_date\": \"2024-01-10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals"]
+						}
+					}
+				},
+				{
+					"name": "Create Animal (Horse)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tag_number\": \"HORSE-001\",\n  \"species\": \"horse\",\n  \"type\": \"Stallion\",\n  \"name\": \"Thunder\",\n  \"gender\": \"male\",\n  \"date_of_birth\": \"2018-03-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals"]
+						}
+					}
+				},
+				{
+					"name": "Create Animal (Sheep)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tag_number\": \"SHEEP-001\",\n  \"species\": \"sheep\",\n  \"type\": \"ram\",\n  \"name\": \"Wooly\",\n  \"gender\": \"male\",\n  \"date_of_birth\": \"2021-04-10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals"]
+						}
+					}
+				},
+				{
+					"name": "Get Animal by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Animal",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Name\",\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Animal",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Upcoming Calvings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/upcoming-calvings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", "upcoming-calvings"]
+						}
+					}
+				},
+				{
+					"name": "Get Cows Needing Insemination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/needing-insemination",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", "needing-insemination"]
+						}
+					}
+				},
+				{
+					"name": "Get Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/notifications",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", "notifications"]
+						}
+					}
+				},
+				{
+					"name": "Record Insemination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bull_id\": 1,\n  \"insemination_date\": \"2024-01-15\",\n  \"method\": \"AI\",\n  \"notes\": \"Successful insemination\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id/insemination",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id", "insemination"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Insemination History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id/insemination-history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id", "insemination-history"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Insemination Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"confirmed_pregnant\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals/:animalId/insemination/:inseminationId/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":animalId", "insemination", ":inseminationId", "status"],
+							"variable": [
+								{
+									"key": "animalId",
+									"value": "1"
+								},
+								{
+									"key": "inseminationId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Record Calving",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"calving_date\": \"2024-02-15\",\n  \"calves_count\": 1,\n  \"calving_type\": \"normal\",\n  \"notes\": \"Healthy calf born\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id/calving",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id", "calving"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Calving History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/animals/:id/calving-history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "animals", ":id", "calving-history"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Vets",
+			"item": [
+				{
+					"name": "Get All Vets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vets",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vets"]
+						}
+					}
+				},
+				{
+					"name": "Update Vet Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"specialization\": \"Updated Specialization\",\n  \"clinic_name\": \"New Clinic Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/vet/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet", "profile"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Vet Requests",
+			"item": [
+				{
+					"name": "Send Vet Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vet_id\": 1,\n  \"message\": \"Please assign this vet to my farm\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests"]
+						}
+					}
+				},
+				{
+					"name": "Get My Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/my-requests",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", "my-requests"]
+						}
+					}
+				},
+				{
+					"name": "Get Pending Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/pending",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", "pending"]
+						}
+					}
+				},
+				{
+					"name": "List Farms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/farms",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", "farms"]
+						}
+					}
+				},
+				{
+					"name": "Get Assigned Farms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/assigned-farms",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", "assigned-farms"]
+						}
+					}
+				},
+				{
+					"name": "Approve Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/:id/approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reject Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/:id/reject",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Cancel Request",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/vet-requests/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "vet-requests", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

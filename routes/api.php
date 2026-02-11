@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register/farmer', [RegistrationController::class, 'registerFarmer']);
 Route::post('/register/vet', [RegistrationController::class, 'registerVet']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/translations', [\App\Http\Controllers\Api\TranslationController::class, 'index']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    
+    // Translation locale update (requires auth to save to user profile)
+    Route::put('/translations/locale', [\App\Http\Controllers\Api\TranslationController::class, 'updateLocale']);
     
     // Farm routes
     Route::get('/farm', [\App\Http\Controllers\Api\FarmController::class, 'show']);
@@ -27,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/animals/upcoming-calvings', [\App\Http\Controllers\Api\AnimalController::class, 'upcomingCalvings']);
     Route::get('/animals/needing-insemination', [\App\Http\Controllers\Api\AnimalController::class, 'cowsNeedingInsemination']);
     Route::get('/animals/notifications', [\App\Http\Controllers\Api\AnimalController::class, 'notifications']);
+    Route::put('/animals/notifications/{notificationId}/read', [\App\Http\Controllers\Api\AnimalController::class, 'markNotificationAsRead']);
     Route::get('/animals/{id}', [\App\Http\Controllers\Api\AnimalController::class, 'show']);
     Route::put('/animals/{id}', [\App\Http\Controllers\Api\AnimalController::class, 'update']);
     Route::delete('/animals/{id}', [\App\Http\Controllers\Api\AnimalController::class, 'destroy']);
@@ -34,9 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/animals/{id}/insemination-history', [\App\Http\Controllers\Api\AnimalController::class, 'getInseminationHistory']);
     Route::put('/animals/{animalId}/insemination/{inseminationId}/status', [\App\Http\Controllers\Api\AnimalController::class, 'updateInseminationStatus']);
     Route::post('/animals/{id}/calving', [\App\Http\Controllers\Api\AnimalController::class, 'recordCalving']);
+    Route::get('/animals/{id}/calving-history', [\App\Http\Controllers\Api\AnimalController::class, 'getCalvingHistory']);
     
     // Vet routes
     Route::get('/vets', [\App\Http\Controllers\Api\VetController::class, 'index']);
+    Route::put('/vet/profile', [\App\Http\Controllers\Api\VetController::class, 'updateProfile']);
     
     // Vet request routes
     Route::get('/vet-requests/my-requests', [\App\Http\Controllers\Api\VetRequestController::class, 'myRequests']);

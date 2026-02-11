@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,8 +13,10 @@ return new class extends Migration
     {
         // Ensure animalable_id and animalable_type are nullable
         // This is necessary for horses and sheep which don't use animalable relationships
-        DB::statement('ALTER TABLE `animals` MODIFY `animalable_id` BIGINT UNSIGNED NULL');
-        DB::statement('ALTER TABLE `animals` MODIFY `animalable_type` VARCHAR(255) NULL');
+        Schema::table('animals', function (Blueprint $table) {
+            $table->unsignedBigInteger('animalable_id')->nullable()->change();
+            $table->string('animalable_type')->nullable()->change();
+        });
     }
 
     /**
@@ -23,5 +26,9 @@ return new class extends Migration
     {
         // Note: We cannot safely make these non-nullable without data loss
         // If needed, you would need to handle existing null values first
+        Schema::table('animals', function (Blueprint $table) {
+            $table->unsignedBigInteger('animalable_id')->nullable(false)->change();
+            $table->string('animalable_type')->nullable(false)->change();
+        });
     }
 };

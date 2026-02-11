@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# cattle-backend
-=======
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -57,7 +54,38 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Deployment
+
+### Cloud Deployment
+
+This application is ready for deployment on Laravel Cloud, Heroku, Laravel Forge, DigitalOcean, and other cloud platforms.
+
+**Quick Start:**
+
+1. Set environment variables (see `.env.example`)
+2. Run migrations: `php artisan migrate --force`
+3. Optimize for production:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   composer install --optimize-autoloader --no-dev
+   ```
+
+For detailed deployment instructions, see [CLOUD_DEPLOY.md](./CLOUD_DEPLOY.md)
+
+### Required Environment Variables
+
+- `APP_KEY` - Application encryption key
+- `APP_URL` - Backend application URL
+- `FRONTEND_URL` - Frontend application URL (for CORS)
+- `DB_*` - Database connection details (Neon PostgreSQL recommended)
+- `SESSION_DRIVER` - Set to `database` for production
+
+### Database Setup (Neon PostgreSQL)
+
+This application uses Neon PostgreSQL. See [NEON_SETUP.md](./NEON_SETUP.md) for detailed setup instructions.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> d6b280d (first commit)

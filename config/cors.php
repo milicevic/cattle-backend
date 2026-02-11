@@ -15,21 +15,32 @@ return [
     |
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
+    'allowed_origins' => array_filter([
+        // Development origins
         'http://localhost:3000',
         'http://localhost:3001',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:3001',
         'http://localhost:8000',
+        'http://localhost:8001',
         'http://127.0.0.1:8000',
-        env('FRONTEND_URL', 'http://localhost:3000'),
-    ],
+        'http://127.0.0.1:8001',
+        // Production frontend URL from environment variable
+        env('FRONTEND_URL'),
+        // Vercel preview deployments (wildcard pattern)
+        env('FRONTEND_URL') ? preg_replace('/^https?:\/\//', 'https://*.vercel.app', env('FRONTEND_URL')) : null,
+    ]),
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        // Allow Vercel preview deployments (e.g., https://*.vercel.app)
+        env('FRONTEND_URL') && strpos(env('FRONTEND_URL'), 'vercel.app') !== false 
+            ? '/^https:\/\/.*\.vercel\.app$/'
+            : null,
+    ],
 
     'allowed_headers' => ['*'],
 

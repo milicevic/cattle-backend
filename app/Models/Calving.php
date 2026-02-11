@@ -4,17 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Bull;
-use App\Models\User;
 
-class Insemination extends Model
+class Calving extends Model
 {
     protected $fillable = [
         'cow_id',
         'animal_id',
-        'bull_id',
-        'insemination_date',
-        'status',
+        'calving_date',
+        'is_successful',
         'notes',
         'performed_by_id',
     ];
@@ -22,12 +19,13 @@ class Insemination extends Model
     protected function casts(): array
     {
         return [
-            'insemination_date' => 'date',
+            'calving_date' => 'date',
+            'is_successful' => 'boolean',
         ];
     }
 
     /**
-     * Get the cow that this insemination belongs to.
+     * Get the cow that this calving belongs to.
      */
     public function cow(): BelongsTo
     {
@@ -35,7 +33,7 @@ class Insemination extends Model
     }
 
     /**
-     * Get the animal that this insemination belongs to.
+     * Get the animal that this calving belongs to.
      */
     public function animal(): BelongsTo
     {
@@ -43,15 +41,7 @@ class Insemination extends Model
     }
 
     /**
-     * Get the bull used for this insemination (if recorded).
-     */
-    public function bull(): BelongsTo
-    {
-        return $this->belongsTo(Bull::class);
-    }
-
-    /**
-     * Get the user who performed this insemination.
+     * Get the user who performed this calving.
      */
     public function performedBy(): BelongsTo
     {

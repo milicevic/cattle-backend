@@ -1,0 +1,69 @@
+{
+    "common": {
+        "welcome": "Bienvenido",
+        "login": "Iniciar sesión",
+        "logout": "Cerrar sesión",
+        "register": "Registrarse",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "name": "Nombre",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "add": "Agregar",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "actions": "Acciones",
+        "status": "Estado",
+        "loading": "Cargando...",
+        "error": "Error",
+        "success": "Éxito",
+        "close": "Cerrar"
+    },
+    "dashboard": {
+        "title": "Panel de control",
+        "farmer": "Panel del agricultor",
+        "vet": "Panel del veterinario",
+        "notifications": "Notificaciones",
+        "upcoming_calvings": "Partos próximos",
+        "animals": "Animales",
+        "farms": "Granjas"
+    },
+    "animals": {
+        "title": "Animales",
+        "add_animal": "Agregar animal",
+        "tag_number": "Número de etiqueta",
+        "species": "Especie",
+        "type": "Tipo",
+        "gender": "Género",
+        "date_of_birth": "Fecha de nacimiento",
+        "cattle": "Ganado",
+        "horse": "Caballo",
+        "sheep": "Oveja",
+        "bull": "Toro",
+        "cow": "Vaca",
+        "steer": "Novillo",
+        "heifer": "Novilla"
+    },
+    "notifications": {
+        "title": "Notificaciones",
+        "important_alerts": "Alertas y recordatorios importantes",
+        "calving_due_soon": "Parto próximo",
+        "insemination_due": "Inseminación pendiente",
+        "no_notifications": "No hay notificaciones"
+    },
+    "calvings": {
+        "title": "Partos próximos",
+        "expected_date": "Fecha esperada",
+        "days_remaining": "Días restantes",
+        "no_upcoming": "No hay partos próximos en los próximos 30 días",
+        "record_calving": "Registrar parto"
+    },
+    "farm": {
+        "title": "Información de la granja",
+        "name": "Nombre de la granja",
+        "location": "Ubicación",
+        "state": "Estado"
+    }
+}

@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION'),
+    'connection' => 'pgsql', // Force PostgreSQL connection for sessions
 
     /*
     |--------------------------------------------------------------------------
