@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => array_filter([
+    'allowed_origins' => array_values(array_filter([
         // Development origins
         'http://localhost:3000',
         'http://localhost:3001',
@@ -31,16 +31,16 @@ return [
         'http://127.0.0.1:8001',
         // Production frontend URL from environment variable
         env('FRONTEND_URL'),
-        // Vercel preview deployments (wildcard pattern)
-        env('FRONTEND_URL') ? preg_replace('/^https?:\/\//', 'https://*.vercel.app', env('FRONTEND_URL')) : null,
-    ]),
+        // Additional frontend URLs (comma-separated)
+        ...(env('FRONTEND_URLS') ? array_map('trim', explode(',', env('FRONTEND_URLS'))) : []),
+    ])),
 
-    'allowed_origins_patterns' => [
+    'allowed_origins_patterns' => array_values(array_filter([
         // Allow Vercel preview deployments (e.g., https://*.vercel.app)
-        env('FRONTEND_URL') && strpos(env('FRONTEND_URL'), 'vercel.app') !== false 
-            ? '/^https:\/\/.*\.vercel\.app$/'
-            : null,
-    ],
+        '/^https:\/\/.*\.vercel\.app$/',
+        // Allow custom production domains pattern if specified
+        env('FRONTEND_DOMAIN_PATTERN') ? env('FRONTEND_DOMAIN_PATTERN') : null,
+    ])),
 
     'allowed_headers' => ['*'],
 

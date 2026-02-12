@@ -33,6 +33,12 @@ APP_URL=https://your-app-name.cloud.laravel.com
 
 FRONTEND_URL=https://your-frontend-domain.vercel.app
 
+# Additional frontend URLs (comma-separated, optional)
+# FRONTEND_URLS=https://www.yourdomain.com,https://yourdomain.com
+
+# Frontend domain pattern for wildcard matching (optional)
+# FRONTEND_DOMAIN_PATTERN=/^https:\/\/.*\.yourdomain\.com$/
+
 # Neon PostgreSQL Configuration
 DB_CONNECTION=pgsql
 DB_HOST=your-project.neon.tech

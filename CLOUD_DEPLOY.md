@@ -26,15 +26,14 @@ APP_URL=https://your-backend-domain.com
 
 # Database Configuration
 # For Neon PostgreSQL (recommended)
-DB_CONNECTION=pgsql
-DB_HOST=your-project.neon.tech
-DB_PORT=5432
-DB_DATABASE=neondb
-DB_USERNAME=your_neon_user
-DB_PASSWORD=your_neon_password
+# DB_CONNECTION=pgsql
+# DB_HOST=your-project.neon.tech
+# DB_PORT=5432
+# DB_DATABASE=neondb
+# DB_USERNAME=your_neon_user
+# DB_PASSWORD=your_neon_password
 # Or use connection string:
-# DB_URL=postgresql://user:password@host.neon.tech/neondb?sslmode=require
-
+DB_URL=postgresql://neondb_owner:npg_J5GnkCA3VhlX@ep-wandering-paper-ag9vhwij-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 # For Laravel Cloud database (alternative)
 # DB_CONNECTION=pgsql
 # DB_HOST=your-cloud-db-host
@@ -44,7 +43,16 @@ DB_PASSWORD=your_neon_password
 # DB_PASSWORD=your_db_password
 
 # Frontend URL for CORS
+# Primary frontend URL
 FRONTEND_URL=https://your-frontend-domain.vercel.app
+
+# Additional frontend URLs (comma-separated, optional)
+# For multiple domains or preview deployments
+# FRONTEND_URLS=https://www.yourdomain.com,https://yourdomain.com,https://staging.yourdomain.com
+
+# Frontend domain pattern for wildcard matching (optional)
+# Example: /^https:\/\/.*\.yourdomain\.com$/
+# FRONTEND_DOMAIN_PATTERN=
 
 # Session Configuration
 SESSION_DRIVER=database
